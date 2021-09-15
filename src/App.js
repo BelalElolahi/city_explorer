@@ -1,8 +1,9 @@
-
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SerchForm from './component/SerchForm';
 import Location from './component/Location';
+import Weather from './component/Weather';
+import Movie from './component/Movie';
 import axios from 'axios';
 import Map1 from './component/Map1';
 
@@ -19,7 +20,8 @@ export class App extends Component {
             showData: false,
             alertShow: false,
             errorMessage: "",
-            weatherData: []
+            weatherData: [],
+            movieData:[]
 
 
         };
@@ -40,7 +42,7 @@ export class App extends Component {
 
         let config = {
             method: "GET",
-            baseURL: `https://api.locationiq.com/v1/autocomplete.php?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.nameOfCity}`
+            baseURL: `https://api.locationiq.com/v1/autocomplete.php?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.nameOfCity}&format=json`
         };
         console.log(config);
         axios(config).then(res => {
@@ -53,9 +55,12 @@ export class App extends Component {
                 showData: true
 
             });
+        
         }).then(() => {
-
-            axios.get(`http://localhost:8000/weather_data?lat=${this.state.lat}&lon=${this.state.lon}`).then(res => {
+            
+                    console.log(this.state.nameOfCity.split(',')[0]);
+            axios.get(`http://localhost:8000/weather?city=${this.state.nameOfCity.split(',')[0]}&lat=${this.state.lat}&lon=${this.state.lon}`)
+            .then(res => {
                 console.log(res.data);
 
                 this.setState({
@@ -63,41 +68,51 @@ export class App extends Component {
                 });
                 console.log(this.state.weatherData);
 
+                   console.log(this.state.nameOfCity);
+            });
+        }
+        ).then(()=>{
 
-            }).catch(error => {
-                console.error(error);
+            console.log(this.state.nameOfCity.split(',')[0]);
+            axios.get(`http://localhost:8000/movies?searchQuery=${this.state.nameOfCity}`)
+            .then(res => {
+                console.log(res.data);
+
                 this.setState({
-                    errorMessage: error,
-                    alertShow: true
+                    movieData: res.data
                 });
-            });
-        }
-        ).catch(error => {
-            console.error(error);
-            this.setState({
-                errorMessage: error,
-                alertShow: true
+                console.log(this.state.movieData);
 
 
             });
 
-        }
+        });
+       
+            
 
-        );
+        
 
     }
 
+    /*.catch(error => {
+        console.log(error);
+        this.setState({
+            errorMessage: error,
+            alertShow: true
+        });
+        console.log(this.state.alertShow);
+        console.log(this.state.errorMessage);
+    });
 
+*/
 
     render() {
         return (
-            <div >
+            <div className="row">
                 <SerchForm handelInputLocation={this.handelInputLocation} handelSubmit={this.handelSubmit} />
-
                 {
                     this.state.showData &&
                     <>
-
                         <Location
                             cityName={this.state.nameOfCity}
                             lat={this.state.lat}
@@ -105,22 +120,16 @@ export class App extends Component {
                             imgeUrl={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&size=100px250&zoom=${this.state.zoom}&markers=${this.state.lat},${this.state.lon}|icon:large-blue-cutout&format=png`}
                             
 
-                        />
-                        {
-                           
-                            this.state.weatherData.forEach(item =>{
-                                  <><h1>{item.day}</h1><h1>{item.deccription}</h1></>;
-                            })
-                        }
+                        />      
 
+                        <Weather weatherData={this.state.weatherData} />
+                        <Movie movieData={this.state.movieData}/>
                     </>
                 }
                 
 
                 {
                     this.state.alertShow && <Map1 errormessage={this.state.errorMessage} />
-                  
-                    
 
                 }
 

@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
+import { Alert } from 'react-bootstrap';
 
 export class Map1 extends Component {
     
   
     render() {
         return (
-            <h1>there is an error   {this.props.errorMessage} </h1>
+
+              <Alert>
+               error {this.props.errormessage}
+              </Alert>
+        
         );
       }
 }
