@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import SerchForm from './component/SerchForm';
 import Location from './component/Location';
 import Weather from './component/Weather';
-import Movie from './component/Movie';
+import Movies from './component/Movies';
 import axios from 'axios';
 import Map1 from './component/Map1';
 
@@ -57,10 +57,13 @@ export class App extends Component {
             });
         
         }).then(() => {
+            let city = this.state.nameOfCity.toLocaleLowerCase();
+            let city_name= city.split(',')[0];
             
-                    console.log(this.state.nameOfCity.split(',')[0]);
-            axios.get(`http://localhost:8000/weather?city=${this.state.nameOfCity.split(',')[0]}&lat=${this.state.lat}&lon=${this.state.lon}`)
-            .then(res => {
+                    console.log(this.state.nameOfCity);
+                    console.log(city_name);
+            axios.get(`http://${process.env.REACT_APP_BAKEND_URL}/weather?city=${this.city_name}&lat=${this.state.lat}&lon=${this.state.lon}`)
+            .then((res) => {
                 console.log(res.data);
 
                 this.setState({
@@ -70,28 +73,17 @@ export class App extends Component {
 
                    console.log(this.state.nameOfCity);
             });
-        }
-        ).then(()=>{
-
-            console.log(this.state.nameOfCity.split(',')[0]);
-            axios.get(`http://localhost:8000/movies?searchQuery=${this.state.nameOfCity}`)
-            .then(res => {
+            axios.get(`http://${process.env.REACT_APP_BAKEND_URL}/movies?searchQuery=${city_name}`).then((res) => {
                 console.log(res.data);
+          this.setState({
+            movieData: res.data
+          });
+          console.log(this.state.movieData);
 
-                this.setState({
-                    movieData: res.data
-                });
-                console.log(this.state.movieData);
-
-
-            });
-
+          console.log(this.state.nameOfCity);
         });
-       
-            
-
-        
-
+        }
+        );   
     }
 
     /*.catch(error => {
@@ -123,7 +115,7 @@ export class App extends Component {
                         />      
 
                         <Weather weatherData={this.state.weatherData} />
-                        <Movie movieData={this.state.movieData}/>
+                        <Movies movieData={this.state.movieData}/>
                     </>
                 }
                 
