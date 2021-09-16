@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Card } from 'react-bootstrap';
 
 export class Movie extends Component {
     render() {
@@ -9,9 +10,10 @@ export class Movie extends Component {
                    {
                         this.props.movieData.map(item => {
                             console.log(item);
+                            return(  
                             
                             <Card style={{ width: '18rem' }}>
-                            <Card.Img variant="top" src={item.imageUrl}/>
+                           
                             <Card.Body>
                                 <Card.Title>{item.title}</Card.Title>
                                 <Card.Text> 
@@ -23,9 +25,9 @@ export class Movie extends Component {
                                 </Card.Text>
                                
                             </Card.Body>
-                        </Card>;
+                        </Card>
                         
-
+                          );
                         })
 
                     }
