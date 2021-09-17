@@ -21,7 +21,7 @@ export class App extends Component {
             alertShow: false,
             errorMessage: "",
             weatherData: [],
-            movieData:[]
+            movieData: []
 
 
         };
@@ -36,6 +36,8 @@ export class App extends Component {
         });
         console.log(this.state.nameOfCity);
     }
+
+
 
     handelSubmit = (e) => {
         e.preventDefault();
@@ -53,37 +55,70 @@ export class App extends Component {
                 lon: resposed.lon,
                 zoom: 18,
                 showData: true
+                
 
             });
-        
-        }).then(() => {
+
+        }).catch(err => {
+            console.log(err);
+            this.setState({
+                showData:false,
+                errorMessage: err,
+                alertShow: true
+            });
+            console.log(this.state.alertShow);
+            console.log(this.state.errorMessage);
+        }) .then(() => {
             let city = this.state.nameOfCity.toLocaleLowerCase();
-            let city_name= city.split(',')[0];
-            
+            let city_name = city.split(',')[0];
+
+            console.log(this.state.nameOfCity);
+            console.log(city_name);
+            axios.get(`http://${process.env.REACT_APP_BAKEND_URL}/weather?city=${city_name}&lat=${this.state.lat}&lon=${this.state.lon}`)
+                .then((res) => {
+                    console.log(res.data,'hello');
+                    console.log(res.data.data,'hello');
+
+                    
+
+                    this.setState({
+                        weatherData: res.data.data,
+                        alertShow:false,
+                    showData:true
+                    });
+                    console.log(this.state.weatherData);
+
                     console.log(this.state.nameOfCity);
-                    console.log(city_name);
-            axios.get(`http://${process.env.REACT_APP_BAKEND_URL}/weather?city=${this.city_name}&lat=${this.state.lat}&lon=${this.state.lon}`)
-            .then((res) => {
-                console.log(res.data);
-
-                this.setState({
-                    weatherData: res.data
+                }).catch(err => {
+                    console.log(err);
+                    this.setState({
+                        showData: false,
+                        errorMessage: err,
+                        alertShow: true
+                    });
+                    console.log(this.state.alertShow);
+                    console.log(this.state.errorMessage);
                 });
-                console.log(this.state.weatherData);
 
-                   console.log(this.state.nameOfCity);
-            });
+
             axios.get(`http://${process.env.REACT_APP_BAKEND_URL}/movies?searchQuery=${city_name}`).then((res) => {
                 console.log(res.data);
-          this.setState({
-            movieData: res.data
-          });
-          console.log(this.state.movieData);
+                console.log(res.data.data,'hello');
+                
 
-          console.log(this.state.nameOfCity);
+                this.setState({
+                    movieData: res.data.data,
+                    alertShow:false,
+                    showData:true,
+                });
+                console.log(this.state.movieData);
+
+                console.log(this.state.nameOfCity);
+            });
+
+
+
         });
-        }
-        );   
     }
 
     /*.catch(error => {
@@ -110,15 +145,15 @@ export class App extends Component {
                             lat={this.state.lat}
                             lon={this.state.lon}
                             imgeUrl={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&size=100px250&zoom=${this.state.zoom}&markers=${this.state.lat},${this.state.lon}|icon:large-blue-cutout&format=png`}
-                            
 
-                        />      
+
+                        />
 
                         <Weather weatherData={this.state.weatherData} />
-                        <Movies movieData={this.state.movieData}/>
+                        <Movies movieData={this.state.movieData} />
                     </>
                 }
-                
+
 
                 {
                     this.state.alertShow && <Map1 errormessage={this.state.errorMessage} />

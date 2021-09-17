@@ -5,7 +5,6 @@ export class Weather extends Component {
     render() {
         return (
             <div>
-                belal
                <WeatherDay weatherData={this.props.weatherData}/>
             </div>
         );

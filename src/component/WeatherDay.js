@@ -6,15 +6,16 @@ export class WeatherDay extends Component {
     render() {
         return (
             <div>
+                belal
                 <ListGroup>
                     <ListGroup.Item>Weather</ListGroup.Item>
                     {
                         this.props.weatherData.map(item =>{
                             console.log(item.date);
-                            
-                            
-                            <><ListGroup.Item>{item.date}</ListGroup.Item>
-                            <ListGroup.Item>{item.description}</ListGroup.Item></>;
+                            return( <>
+                            <ListGroup.Item>{item.date}</ListGroup.Item>
+                            <ListGroup.Item>{item.description}</ListGroup.Item>
+                            </> );
 
                         } )
                             
